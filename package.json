@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/node": "^18.16.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "prisma": "^4.13.0"
+  }
+}
