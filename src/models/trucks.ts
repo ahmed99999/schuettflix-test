@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-
+import { TrucksType } from "../validator";
 const prisma = new PrismaClient();
 
 const getTrucks = async () => {
@@ -21,4 +21,8 @@ const getTruckById = async (truckId: number) => {
   });
 };
 
-export default { getTrucks, getTruckById };
+const createTruck = async (truck: TrucksType) => {
+  return prisma.trucks.create({ data: truck });
+};
+
+export default { getTrucks, getTruckById, createTruck };
