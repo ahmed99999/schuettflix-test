@@ -1,8 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
+
 const getTrucks = async () => {
-  return await prisma.trucks.findMany();
+  return prisma.trucks.findMany({
+    select: {
+      id: true,
+      model: true,
+      latitude: true,
+      longitude: true,
+    },
+  });
 };
 
 export { getTrucks };
