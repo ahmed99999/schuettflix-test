@@ -1,8 +1,8 @@
 import { Router } from "express";
-import forecastRouter from "./trucks";
+import trucksRouter from "./trucks";
 
 const router = Router({ mergeParams: true });
 
-router.use("/trucks", forecastRouter);
+router.use("/trucks", trucksRouter);
 
 export default router;
