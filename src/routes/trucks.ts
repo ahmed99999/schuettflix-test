@@ -1,7 +1,10 @@
 import { Router } from "express";
-import { getTrucksController } from "../controllers/trucks";
+import { getTrucks, getTruckById } from "../controllers/trucks";
 
 const truckRouter = Router({ mergeParams: true });
-truckRouter.get("/", getTrucksController);
+
+truckRouter.get("/:truckId", getTruckById);
+
+truckRouter.get("/", getTrucks);
 
 export default truckRouter;

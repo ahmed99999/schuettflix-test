@@ -13,4 +13,12 @@ const getTrucks = async () => {
   });
 };
 
-export { getTrucks };
+const getTruckById = async (truckId: number) => {
+  return prisma.trucks.findUnique({
+    where: {
+      id: truckId,
+    },
+  });
+};
+
+export default { getTrucks, getTruckById };
