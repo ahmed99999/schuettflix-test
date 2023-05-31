@@ -1,13 +1,19 @@
 import { Request, Response, NextFunction } from "express";
 import Trucks from "../models/trucks";
-import { TrucksValidator, TrucksType } from "../validator";
+import {
+  CreateTrucksValidator,
+  CreateTrucksType,
+  GetTrucksValidator,
+  GetTrucksType,
+} from "../validator";
 
 const getTrucks = async (
-  _request: Request,
+  request: Request<any, any, any, GetTrucksType>,
   response: Response,
   next: NextFunction
 ) => {
-  const trucks = await Trucks.getTrucks();
+  const params = GetTrucksValidator.parse(request.query);
+  const trucks = await Trucks.getTrucks(params);
 
   response.json(trucks);
   next();
@@ -30,11 +36,11 @@ const getTruckById = async (
 };
 
 const createTruck = async (
-  request: Request<any, any, TrucksType>,
+  request: Request<any, any, CreateTrucksType>,
   response: Response,
   next: NextFunction
 ) => {
-  const newTruck = TrucksValidator.parse(request.body);
+  const newTruck = CreateTrucksValidator.parse(request.body);
   const truck = await Trucks.createTruck(newTruck);
 
   response.json(truck);
