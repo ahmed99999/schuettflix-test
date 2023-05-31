@@ -50,6 +50,11 @@ const GetTrucksValidator = z
   })
   .partial();
 
-export { CreateTrucksValidator, GetTrucksValidator };
+const GetTruckByIdValidator = z.object({
+  truckId: z.preprocess((str) => parseInt(str as any as string), z.number()),
+});
+
+export { CreateTrucksValidator, GetTrucksValidator, GetTruckByIdValidator };
 export type CreateTrucksType = z.infer<typeof CreateTrucksValidator>;
 export type GetTrucksType = z.infer<typeof GetTrucksValidator>;
+export type GetTruckByIdType = z.infer<typeof GetTruckByIdValidator>;

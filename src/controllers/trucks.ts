@@ -5,6 +5,8 @@ import {
   CreateTrucksType,
   GetTrucksValidator,
   GetTrucksType,
+  GetTruckByIdValidator,
+  GetTruckByIdType,
 } from "../validator";
 import { ZodError } from "zod";
 import { getZodErrorMessage } from "../utils";
@@ -30,23 +32,13 @@ const getTrucks = async (
   }
 };
 
-interface GetTruckByIdParams {
-  truckId: string;
-}
-
 const getTruckById = async (
-  request: Request<GetTruckByIdParams>,
+  request: Request<GetTruckByIdType>,
   response: Response,
   next: NextFunction
 ) => {
   try {
-    const truckId = parseInt(request.params.truckId, 10);
-
-    if (!truckId) {
-      response.status(400);
-      return response.send("truck id must be a number");
-    }
-
+    const { truckId } = GetTruckByIdValidator.parse(request.params);
     const truck = await Trucks.getTruckById(truckId);
 
     if (!truck) {
@@ -57,6 +49,11 @@ const getTruckById = async (
     response.json(truck);
     next();
   } catch (error) {
+    if (error instanceof ZodError) {
+      response.status(400);
+      response.send(getZodErrorMessage(error));
+    }
+
     next(error);
   }
 };
