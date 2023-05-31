@@ -6,17 +6,28 @@ import {
   GetTrucksValidator,
   GetTrucksType,
 } from "../validator";
+import { ZodError } from "zod";
+import { getZodErrorMessage } from "../utils";
 
 const getTrucks = async (
   request: Request<any, any, any, GetTrucksType>,
   response: Response,
   next: NextFunction
 ) => {
-  const params = GetTrucksValidator.parse(request.query);
-  const trucks = await Trucks.getTrucks(params);
+  try {
+    const params = GetTrucksValidator.parse(request.query);
+    const trucks = await Trucks.getTrucks(params);
 
-  response.json(trucks);
-  next();
+    response.json(trucks);
+    next();
+  } catch (error) {
+    if (error instanceof ZodError) {
+      response.status(400);
+      response.send(getZodErrorMessage(error));
+    }
+
+    next(error);
+  }
 };
 
 interface GetTruckByIdParams {
@@ -28,11 +39,26 @@ const getTruckById = async (
   response: Response,
   next: NextFunction
 ) => {
-  const truckId = parseInt(request.params.truckId, 10);
-  const truck = await Trucks.getTruckById(truckId);
+  try {
+    const truckId = parseInt(request.params.truckId, 10);
 
-  response.json(truck);
-  next();
+    if (!truckId) {
+      response.status(400);
+      return response.send("truck id must be a number");
+    }
+
+    const truck = await Trucks.getTruckById(truckId);
+
+    if (!truck) {
+      response.status(404);
+      return response.send("truck was not found");
+    }
+
+    response.json(truck);
+    next();
+  } catch (error) {
+    next(error);
+  }
 };
 
 const createTruck = async (
@@ -40,11 +66,20 @@ const createTruck = async (
   response: Response,
   next: NextFunction
 ) => {
-  const newTruck = CreateTrucksValidator.parse(request.body);
-  const truck = await Trucks.createTruck(newTruck);
+  try {
+    const newTruck = CreateTrucksValidator.parse(request.body);
+    const truck = await Trucks.createTruck(newTruck);
 
-  response.json(truck);
-  next();
+    response.json(truck);
+    next();
+  } catch (error: any) {
+    if (error instanceof ZodError) {
+      response.status(400);
+      response.send(getZodErrorMessage(error));
+    }
+
+    next(error);
+  }
 };
 
 export { getTrucks, getTruckById, createTruck };
